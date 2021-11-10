@@ -19,40 +19,16 @@ public class Program : MonoBehaviour
     [SerializeField] private TextMeshProUGUI successRateText;
     [SerializeField] private TextMeshProUGUI numberOfPointsText;
     [SerializeField] private TextMeshProUGUI perceptronInfo;
-    [SerializeField] private TextMeshProUGUI testButtonText;
     [SerializeField] private Slider numberOfPointsSlider;
-
-    TestManager testManager;
 
     private void Awake()
     {
-        testManager = FindObjectOfType<TestManager>();
+        numberOfPointsSlider.onValueChanged.AddListener(ValueChanged);
     }
 
     void Start()
     {
         Reset();
-    }
-
-    public void Reset()
-    {
-        iterationNumber = 0;
-        iterationText.text = "Iteration Nº: " + iterationNumber;
-
-        successRate = 0.0f;
-        successRateText.text = "Success Rate: " + successRate + "%";
-
-        perceptron = new Perceptron();
-
-        ClearPoints();
-
-        UpdatePerceptronInfo();
-    }
-
-    private void UpdatePerceptronInfo()
-    {
-        float[] weightsInfo = perceptron.GetWeightsInfo();
-        perceptronInfo.text = "Perceptron Info: " + "\n- W0: " + weightsInfo[0] + "\n- W1: " + weightsInfo[1];
     }
 
     public void GenerateTrainingData()
@@ -67,7 +43,7 @@ public class Program : MonoBehaviour
             point.InitData(new Vector2(Random.Range(-5.0f, 5.0f), Random.Range(-5.0f, 5.0f)));
         }
     }
-
+    
     public void TrainPerceptron()
     {
         int correctPoints = 0;
@@ -89,15 +65,36 @@ public class Program : MonoBehaviour
         }
 
         iterationNumber++;
-        iterationText.text = "Iteration Nº: " + iterationNumber;
+        iterationText.text = "Iteration NÂº: " + iterationNumber;
 
-        float successRatePercenteage = ((float)correctPoints / (float)points.Count) * 100.0f;
-        successRateText.text = "Success Rate: " + successRatePercenteage + "%";
+        float successRatePercentage = ((float)correctPoints / (float)points.Count) * 100.0f;
+        successRateText.text = "Success Rate: " + successRatePercentage + "%";
+
+        UpdatePerceptronInfo();
+    }
+    
+    private void UpdatePerceptronInfo()
+    {
+        float[] weightsInfo = perceptron.GetWeightsInfo();
+        perceptronInfo.text = "Perceptron Info: " + "\n- W0: " + weightsInfo[0] + "\n- W1: " + weightsInfo[1];
+    }
+    
+    public void Reset()
+    {
+        iterationNumber = 0;
+        iterationText.text = "Iteration NÂº: " + iterationNumber;
+
+        successRate = 0.0f;
+        successRateText.text = "Success Rate: " + successRate + "%";
+
+        perceptron = new Perceptron();
+
+        ClearPoints();
 
         UpdatePerceptronInfo();
     }
 
-    private void ClearPoints()
+    public void ClearPoints()
     {
         if (points != null)
         {
@@ -111,21 +108,6 @@ public class Program : MonoBehaviour
         else
         {
             points = new List<Point>();
-        }
-    }
-
-    public void EnterTestMode()
-    {
-        ClearPoints();
-
-        if (testManager.TestMode)
-        {
-            testButtonText.text = "Test";
-            testManager.TestMode = false;
-        } else
-        {
-            testButtonText.text = "Stop Test";
-            testManager.TestMode = true;
         }
     }
 
@@ -143,10 +125,15 @@ public class Program : MonoBehaviour
     {
         button.interactable = true;
     }
-
-    private void Update()
+    
+    public void DeactivateButton(Button button)
     {
-        numberOfPointsText.text = "Points: " + (int)numberOfPointsSlider.value;
-        numberOfPoints = (int)numberOfPointsSlider.value;
+        button.interactable = false;
+    }
+
+    private void ValueChanged(float value)
+    {
+        numberOfPointsText.text = "Points: " + (int)value;
+        numberOfPoints = (int)value;
     }
 }

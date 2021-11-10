@@ -2,22 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Delu;
+using TMPro;
 
 public class TestManager : MonoBehaviour
 {
     [SerializeField] private Point pointGO;
+    [SerializeField] private TextMeshProUGUI testButtonText;
 
     Program program;
 
-    bool testMode = false;
-    public bool TestMode { get => testMode; set => testMode = value; }
+    bool testMode;
+
+    public bool TestMode
+    {
+        get => testMode;
+        set => testMode = value;
+    }
 
     private void Awake()
     {
         program = GetComponent<Program>();
     }
 
-    // Update is called once per frame
+    public void EnterTestMode()
+    {
+        program.ClearPoints();
+
+        testMode = !testMode;
+        testButtonText.text = testMode ? "Stop Test" : "Test";
+    }
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0) && testMode)

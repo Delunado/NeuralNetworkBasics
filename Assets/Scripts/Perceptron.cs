@@ -36,7 +36,6 @@ public class Perceptron
         int error = target - guess;
 
         //Adjusting the weights
-        //Considerar que si ha acertado no se ajuste porque es 0
         for (int i = 0; i < weights.Length; i++)
         {
             float deltaWeight = error * inputs[i] * learningRate;
